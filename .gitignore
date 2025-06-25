@@ -1,0 +1,28 @@
+# Java/Kotlin
+/build/
+/out/
+/.gradle/
+/*.iml
+/.idea/
+
+# Docker
+**/target/
+**/Dockerfile
+
+# Logs
+*.log
+logs/
+*.pid
+
+# OS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Spring Boot
+*.jar
+
+# Filebeat/ELK generated
+elk/*.log
+
