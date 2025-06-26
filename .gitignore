@@ -7,7 +7,6 @@
 
 # Docker
 **/target/
-**/Dockerfile
 
 # Logs
 *.log
