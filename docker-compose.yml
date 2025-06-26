@@ -1,0 +1,54 @@
+docker-compose:
+  version: '3.8'
+  services:
+    gateway:
+      build: ./gateway
+      ports:
+        - "8080:8080"
+      environment:
+        - SPRING_PROFILES_ACTIVE=docker
+      depends_on:
+        - userservice
+        - zipkin
+
+    userservice:
+      build: ./userservice
+      ports:
+        - "8081:8081"
+      environment:
+        - SPRING_PROFILES_ACTIVE=docker
+      depends_on:
+        - zipkin
+
+    zipkin:
+      image: openzipkin/zipkin
+      ports:
+        - "9411:9411"
+
+    elasticsearch:
+      image: docker.elastic.co/elasticsearch/elasticsearch:7.17.3
+      environment:
+        - discovery.type=single-node
+      ports:
+        - "9200:9200"
+
+    logstash:
+      image: docker.elastic.co/logstash/logstash:7.17.3
+      ports:
+        - "5000:5000"
+      volumes:
+        - ./elk/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+
+    kibana:
+      image: docker.elastic.co/kibana/kibana:7.17.3
+      ports:
+        - "5601:5601"
+      environment:
+        - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+
+    filebeat:
+      image: docker.elastic.co/beats/filebeat:7.17.3
+      volumes:
+        - ./elk/filebeat.yml:/usr/share/filebeat/filebeat.yml
+        - /var/lib/docker/containers:/var/lib/docker/containers:ro
+        - /var/run/docker.sock:/var/run/docker.sock:ro
